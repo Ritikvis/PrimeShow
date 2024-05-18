@@ -55,6 +55,7 @@ public class ShowService {
                     .build();
             showSeatList.add(showSeat);
         }
+        show.setShowSeatList(showSeatList);
 
         showSeatRepository.saveAll(showSeatList);
         return "The show has been saved to the DB with showId "+show.getShowId();
