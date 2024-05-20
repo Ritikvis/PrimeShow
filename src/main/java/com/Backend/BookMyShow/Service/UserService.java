@@ -26,16 +26,16 @@ public class UserService {
                 .build();
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-//
-//        mailMessage.setTo(userRequest.getEmailId());
-//        mailMessage.setFrom("projectbackend45@gmail.com");
-//        mailMessage.setSubject("Welcome to Book My Show Application !!");
-//
-//        String body = "Hi "+userRequest.getName()+" !" +
-//                "Welcome to Book My Show Application, Enjoy WELCOME10 to get 10% off on tickets";
-//        mailMessage.setText(body);
-//
-//        javaMailSender.send(mailMessage);
+
+        mailMessage.setTo(userRequest.getEmailId());
+        mailMessage.setFrom("projectbackend45@gmail.com");
+        mailMessage.setSubject("Welcome to Book My Show Application !!");
+
+        String body = "Hi "+userRequest.getName()+" !" +
+                "Welcome to Book My Show Application, Enjoy WELCOME10 to get 10% off on tickets";
+        mailMessage.setText(body);
+
+        javaMailSender.send(mailMessage);
 
 
         user = userRepository.save(user);
