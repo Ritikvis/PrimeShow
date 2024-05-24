@@ -7,6 +7,8 @@ import com.Backend.BookMyShow.Requests.UpdateMovieRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MovieService {
     @Autowired
@@ -45,4 +47,5 @@ public class MovieService {
         //put it back to HM
         return "Movie Attributes have been updated ";
     }
+
 }

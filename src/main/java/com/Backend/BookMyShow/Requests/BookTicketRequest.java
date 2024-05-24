@@ -9,4 +9,5 @@ public class BookTicketRequest {
     private List<String> requestedSeats;
     private Integer showId;
     private  Integer userId;
+    private boolean includeFood;
 }

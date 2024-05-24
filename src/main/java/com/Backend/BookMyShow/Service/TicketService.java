@@ -1,21 +1,16 @@
 package com.Backend.BookMyShow.Service;
 
 import com.Backend.BookMyShow.Enum.SeatType;
-import com.Backend.BookMyShow.Models.Show;
-import com.Backend.BookMyShow.Models.ShowSeat;
-import com.Backend.BookMyShow.Models.Ticket;
-import com.Backend.BookMyShow.Models.User;
-import com.Backend.BookMyShow.Repository.ShowRepository;
-import com.Backend.BookMyShow.Repository.ShowSeatRepository;
-import com.Backend.BookMyShow.Repository.TicketRepository;
-import com.Backend.BookMyShow.Repository.UserRepository;
+import com.Backend.BookMyShow.Models.*;
+import com.Backend.BookMyShow.Repository.*;
 import com.Backend.BookMyShow.Requests.BookTicketRequest;
 import com.Backend.BookMyShow.Response.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class TicketService {
@@ -32,33 +27,39 @@ public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    public String bookTicket(BookTicketRequest bookTicketRequest){
+    private static final int FOOD_PRICE = 130; // Define food price
 
+    public String bookTicket(BookTicketRequest bookTicketRequest){
         //1. Find the Show Entity
-        Show show = showRepository.findById(bookTicketRequest.getShowId()).get();
+        Show show = showRepository.findById(bookTicketRequest.getShowId()).orElseThrow(() -> new RuntimeException("Show not found"));
 
         //2. Find the User Entity
-        User user = userRepository.findById(bookTicketRequest.getUserId()).get();
+        User user = userRepository.findById(bookTicketRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
         //3. Mark those Seats as booked now and calculate total Amount
         Integer totalAmount = 0;
         List<ShowSeat> showSeatList = show.getShowSeatList();
 
         for(ShowSeat showSeat : showSeatList) {
-
             String seatNo = showSeat.getSeatNo();
             if(bookTicketRequest.getRequestedSeats().contains(seatNo)) {
                 showSeat.setIsBooked(Boolean.TRUE);
 
                 if(showSeat.getSeatType().equals(SeatType.CLASSIC))
-                    totalAmount = totalAmount + 100;
+                    totalAmount += 100;
                 else
-                    totalAmount = totalAmount+150;
+                    totalAmount += 150;
             }
         }
 
+        // Add food price if food is included
+        if (bookTicketRequest.isIncludeFood()) {
+            totalAmount += FOOD_PRICE;
+        }
+
         //4. Create the Ticket Entity and set the attributes
-        Ticket ticket = Ticket.builder().showDate(show.getShowDate())
+        Ticket ticket = Ticket.builder()
+                .showDate(show.getShowDate())
                 .showTime(show.getShowTime())
                 .movieName(show.getMovie().getMovieName())
                 .theaterName(show.getTheater().getName())
@@ -66,18 +67,18 @@ public class TicketService {
                 .bookedSeats(bookTicketRequest.getRequestedSeats().toString())
                 .show(show)
                 .user(user)
+                .includeFood(bookTicketRequest.isIncludeFood()) // Set food inclusion
                 .build();
-
 
         showSeatRepository.saveAll(showSeatList);
         ticket = ticketRepository.save(ticket);
+
         //5. save the ticket into DB and return Ticket Entity (Ticket Response)
         return ticket.getTicketId();
     }
 
     public TicketResponse generateTicket(String ticketId){
-
-        Ticket ticket = ticketRepository.findById(ticketId).get();
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         //Entity needs to be converted into TicketResponse
 
@@ -88,10 +89,44 @@ public class TicketService {
                 .showDate(ticket.getShowDate())
                 .theaterName(ticket.getTheaterName())
                 .totalAmount(ticket.getTotalAmount())
+                .includeFood(ticket.isIncludeFood()) // Include food information
                 .build();
 
         return ticketResponse;
-
     }
 
+    public Integer calculateTotalRevenueForTheatreOnDate(Integer theaterId, LocalDate date) {
+        List<Ticket> tickets = ticketRepository.findByShowTheaterTheaterIdAndShowShowDate(theaterId, date);
+        int totalRevenue = 0;
+        for (Ticket ticket : tickets) {
+            totalRevenue += ticket.getTotalAmount();
+        }
+        return totalRevenue;
+    }
+
+    public Integer calculateGrossRevenueForMovie(String movieName) {
+        List<Show> shows = showRepository.findByMovie_MovieName(movieName);
+        int grossRevenue = 0;
+        for (Show show : shows) {
+            List<Ticket> tickets = ticketRepository.findByShow(show);
+            for (Ticket ticket : tickets) {
+                grossRevenue += ticket.getTotalAmount();
+            }
+        }
+        return grossRevenue;
+    }
+
+    public List<Theater> findTheatersByMovie(String movieName) {
+        List<Theater> theaters = new ArrayList<>();
+
+        // Find all shows for the given movie
+        List<Show> shows = showRepository.findByMovie_MovieName(movieName);
+
+        // Extract theaters from the shows
+        for (Show show : shows) {
+            theaters.add(show.getTheater());
+        }
+
+        return theaters;
+    }
 }

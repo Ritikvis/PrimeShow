@@ -31,6 +31,8 @@ public class Ticket {
     private String theaterName;
 
     private Integer totalAmount;
+    
+    private boolean includeFood;
 
     @JoinColumn
     @ManyToOne
