@@ -20,8 +20,10 @@ public class User {
     private String name;
 
     private Integer age;
-
+    @Column(nullable = false, unique = true)
     private String emailId;
 
     private String mobileNo;
+    private String password;
+
 }

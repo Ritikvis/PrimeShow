@@ -3,13 +3,19 @@ package com.Backend.BookMyShow.Service;
 import com.Backend.BookMyShow.Repository.UserRepository;
 import com.Backend.BookMyShow.Requests.AddUserRequest;
 import com.Backend.BookMyShow.Models.User;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.Date;
+import java.util.Optional;
 
+@Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;

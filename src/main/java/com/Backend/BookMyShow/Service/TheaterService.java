@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class TheaterService {
     @Autowired
-    private TheaterRepository theaterRepository;
+    private TheaterRepository theaterRepository ;
 
     @Autowired
     private TheaterSeatsRepository theaterSeatsRepository;
