@@ -1,5 +1,6 @@
 package com.Backend.BookMyShow.Models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,9 @@ public class Show {
 
     private LocalDate showDate;
 
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime showTime;
+
 
 
     @JoinColumn

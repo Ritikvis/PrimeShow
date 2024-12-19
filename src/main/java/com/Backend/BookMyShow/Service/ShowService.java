@@ -27,27 +27,30 @@ public class ShowService {
     private ShowSeatRepository showSeatRepository;
 
     public String addShow(AddShowRequest showRequest) {
-
         Movie movie = movieRepository.findMovieByMovieName(showRequest.getMovieName());
-        Theater theater = theaterRepository.findById(showRequest.getTheaterId()).get();
+        if (movie == null) {
+            return "Error: Movie not found.";
+        }
 
-        //Add validations on if movie and theater are valid scenarios
-        Show show = Show.builder().showDate(showRequest.getShowDate())
+        Theater theater = theaterRepository.findById(showRequest.getTheaterId()).orElse(null);
+        if (theater == null) {
+            return "Error: Theater not found.";
+        }
+
+        Show show = Show.builder()
+                .showDate(showRequest.getShowDate())
                 .showTime(showRequest.getShowTime())
                 .movie(movie)
                 .theater(theater)
                 .build();
         show = showRepository.save(show);
 
-
-        //Associate the corresponding show Seats along with it
         List<TheaterSeat> theaterSeatList = theater.getTheaterSeatList();
 
         List<ShowSeat> showSeatList = new ArrayList<>();
-
-        for(TheaterSeat theaterSeat : theaterSeatList) {
-
-            ShowSeat showSeat = ShowSeat.builder().seatNo(theaterSeat.getSeatNo())
+        for (TheaterSeat theaterSeat : theaterSeatList) {
+            ShowSeat showSeat = ShowSeat.builder()
+                    .seatNo(theaterSeat.getSeatNo())
                     .seatType(theaterSeat.getSeatType())
                     .isBooked(Boolean.FALSE)
                     .isFoodAttached(Boolean.FALSE)
@@ -55,9 +58,10 @@ public class ShowService {
                     .build();
             showSeatList.add(showSeat);
         }
-        show.setShowSeatList(showSeatList);
 
+        show.setShowSeatList(showSeatList);
         showSeatRepository.saveAll(showSeatList);
-        return "The show has been saved to the DB with showId "+show.getShowId();
+
+        return "The show has been saved to the DB with showId " + show.getShowId();
     }
 }

@@ -28,8 +28,12 @@ public class Theater {
 
     private Integer noOfScreens;
 
-    //Bidirectional mapping in the parent to keep a record of the child
-    @OneToMany(mappedBy = "theater",cascade = CascadeType.ALL)
+    // Bidirectional mapping in the parent to keep a record of the child
+    @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TheaterSeat> theaterSeatList = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "Theater [id=" + theaterId + ", name=" + name + ", address=" + address + ", noOfScreens=" + noOfScreens + "]";
+    }
 }

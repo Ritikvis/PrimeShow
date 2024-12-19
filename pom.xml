@@ -30,6 +30,18 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Hibernate Validator for Jakarta Bean Validation -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>jakarta.el</artifactId>
+			<version>4.0.2</version>
+		</dependency>
+
 		<!-- Spring Mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,28 +69,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Spring Security -->
-
-
-		<!-- JWT (JSON Web Token) Dependencies -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.11.5</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if you prefer Gson -->
-			<version>0.11.5</version>
-			<scope>runtime</scope>
-		</dependency>
-
 		<!-- Spring Boot Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -90,25 +80,14 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>5.4.0</version> <!-- Use the latest version available -->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
-			<version>5.4.0</version> <!-- Use the latest version available -->
-			<scope>test</scope>
-		</dependency>
-
-		<!-- AssertJ for fluent assertions -->
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>3.23.1</version> <!-- Use the latest version available -->
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 
 	<build>
 		<plugins>
@@ -126,5 +105,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

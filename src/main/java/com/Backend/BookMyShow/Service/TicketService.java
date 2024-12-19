@@ -7,6 +7,8 @@ import com.Backend.BookMyShow.Repository.*;
 import com.Backend.BookMyShow.Requests.BookTicketRequest;
 import com.Backend.BookMyShow.Response.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,6 +29,10 @@ public class TicketService {
 
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     private static final int FOOD_PRICE = 130; // Define food price
 
@@ -57,9 +63,9 @@ public class TicketService {
                     showSeat.setIsBooked(Boolean.TRUE);
 
                     if (showSeat.getSeatType().equals(SeatType.CLASSIC)) {
-                        totalAmount += 100;
+                        totalAmount += 100; // Classic seat price
                     } else {
-                        totalAmount += 150;
+                        totalAmount += 150; // Premium seat price
                     }
                 }
             }
@@ -91,9 +97,35 @@ public class TicketService {
         // Save updated seat statuses and ticket
         showSeatRepository.saveAll(showSeatList);
         ticket = ticketRepository.save(ticket);
+        sendBookingEmail(user, ticket);
 
         // 5. Save the ticket into the database and return the Ticket ID
         return ticket.getTicketId();
+    }
+
+    private void sendBookingEmail(User user, Ticket ticket) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmailId());
+        mailMessage.setFrom("projectbackend45@gmail.com");
+        mailMessage.setSubject("Your Ticket Booking Confirmation - BookMyShow");
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("Hi ").append(user.getName()).append(",\n\n");
+        emailBody.append("Thank you for booking your ticket with BookMyShow!\n");
+        emailBody.append("Here are your ticket details:\n");
+        emailBody.append("Movie Name: ").append(ticket.getMovieName()).append("\n");
+        emailBody.append("Theater Name: ").append(ticket.getTheaterName()).append("\n");
+        emailBody.append("Show Date: ").append(ticket.getShowDate()).append("\n");
+        emailBody.append("Show Time: ").append(ticket.getShowTime()).append("\n");
+        emailBody.append("Booked Seats: ").append(ticket.getBookedSeats()).append("\n");
+        emailBody.append("Total Amount: ").append(ticket.getTotalAmount()).append("\n\n");
+        emailBody.append("Please proceed to payment to confirm your booking.\n");
+        emailBody.append("Thank you!\n\nBest Regards,\nBookMyShow Team");
+
+        mailMessage.setText(emailBody.toString());
+
+        // Send the email
+        javaMailSender.send(mailMessage);
     }
 
 

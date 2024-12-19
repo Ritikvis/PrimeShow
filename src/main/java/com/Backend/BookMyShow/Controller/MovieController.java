@@ -1,6 +1,5 @@
 package com.Backend.BookMyShow.Controller;
 
-import com.Backend.BookMyShow.Models.Movie;
 import com.Backend.BookMyShow.Requests.AddMovieRequest;
 import com.Backend.BookMyShow.Requests.UpdateMovieRequest;
 import com.Backend.BookMyShow.Service.MovieService;
@@ -9,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @RestController
 @RequestMapping("movie")
