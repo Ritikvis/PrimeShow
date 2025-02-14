@@ -1,25 +1,43 @@
 package com.Backend.BookMyShow.Controller;
 
+import com.Backend.BookMyShow.Models.Theater;
 import com.Backend.BookMyShow.Requests.AddUserRequest;
+import com.Backend.BookMyShow.Requests.BookTicketRequest;
+import com.Backend.BookMyShow.Response.TicketResponse;
+import com.Backend.BookMyShow.Service.TicketService;
 import com.Backend.BookMyShow.Service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
+
     @Autowired
     private UserService userService;
+    @Autowired
+    private TicketService ticketService;
 
-    @PostMapping("addUser")
-    public String addUser(@RequestBody AddUserRequest userRequest){
+    @PostMapping("/signup")
+    public ResponseEntity<String> addUser(@RequestBody AddUserRequest userRequest) {
+        return ResponseEntity.ok(userService.addUser(userRequest));
+    }
+    @GetMapping("theater/by-movie/{movieName}")
+    public List<Theater> getTheatersByMovie(@PathVariable String movieName) {
+        return ticketService.findTheatersByMovie(movieName);
+    }
+    @PostMapping("bookTicket")
+    public String bookTicket(@RequestBody BookTicketRequest bookTicketRequest){
 
-        return userService.addUser(userRequest);
+        return ticketService.bookTicket(bookTicketRequest);
     }
 
+    @GetMapping("generateTicket")
+    public TicketResponse generateTicket(@RequestParam("ticketId") String ticketId) {
+
+        return ticketService.generateTicket(ticketId);
+    }
 }

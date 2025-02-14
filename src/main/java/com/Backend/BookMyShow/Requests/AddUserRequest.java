@@ -9,4 +9,6 @@ public class AddUserRequest {
     private Integer age;
     private  String emailId;
     private String mobileNo;
+    private String password;
+    private String roles;
 }

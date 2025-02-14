@@ -22,8 +22,8 @@ public class User {
     private Integer age;
     @Column(nullable = false, unique = true)
     private String emailId;
-
     private String mobileNo;
-
+    private String password;
+    private String roles;
 
 }
