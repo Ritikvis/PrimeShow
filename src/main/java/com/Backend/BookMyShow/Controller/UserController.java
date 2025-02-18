@@ -1,9 +1,11 @@
 package com.Backend.BookMyShow.Controller;
 
+import com.Backend.BookMyShow.Models.Movie;
 import com.Backend.BookMyShow.Models.Theater;
 import com.Backend.BookMyShow.Requests.AddUserRequest;
 import com.Backend.BookMyShow.Requests.BookTicketRequest;
 import com.Backend.BookMyShow.Response.TicketResponse;
+import com.Backend.BookMyShow.Service.MovieService;
 import com.Backend.BookMyShow.Service.TicketService;
 import com.Backend.BookMyShow.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private TicketService ticketService;
+    @Autowired
+    private MovieService movieService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest userRequest) {
@@ -39,5 +43,15 @@ public class UserController {
     public TicketResponse generateTicket(@RequestParam("ticketId") String ticketId) {
 
         return ticketService.generateTicket(ticketId);
+    }
+    @GetMapping("ListOfMovies")
+    public List<Movie> ListOfMovies(){
+        return movieService.ListOfMovies();
+    }
+    @DeleteMapping("/cancel/{ticketId}")
+    public ResponseEntity<String> cancelTicket(@PathVariable String ticketId) {
+        // Find the ticket and cancel it
+        String response = ticketService.cancelTicket(ticketId);
+        return ResponseEntity.ok(response);
     }
 }

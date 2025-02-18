@@ -34,7 +34,10 @@ public class TicketService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    private static final int FOOD_PRICE = 130; // Define food price
+    private static final int FOOD_PRICE = 130;
+    private static final int CLASSIC_SEAT_PRICE = 130;
+    private static final int PREMIUM_SEAT_PRICE = 250;// Define food price
+
 
     public String bookTicket(BookTicketRequest bookTicketRequest) {
         // 1. Find the Show Entity
@@ -63,9 +66,9 @@ public class TicketService {
                     showSeat.setIsBooked(Boolean.TRUE);
 
                     if (showSeat.getSeatType().equals(SeatType.CLASSIC)) {
-                        totalAmount += 100; // Classic seat price
+                        totalAmount +=CLASSIC_SEAT_PRICE ; // Classic seat price
                     } else {
-                        totalAmount += 150; // Premium seat price
+                        totalAmount += PREMIUM_SEAT_PRICE; // Premium seat price
                     }
                 }
             }
@@ -182,4 +185,53 @@ public class TicketService {
 
         return theaters;
     }
+    public String cancelTicket(String ticketId) {
+        // 1. Find the Ticket Entity
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new BookingException("Ticket not found"));
+
+        // 4. If the ticket had booked seats, make them available again
+        List<ShowSeat> showSeats = ticket.getShow().getShowSeatList();
+        for (ShowSeat seat : showSeats) {
+            if (ticket.getBookedSeats().contains(seat.getSeatNo())) {
+                seat.setIsBooked(false); // Mark seat as available
+            }
+        }
+
+        // 5. Save updated seats
+        showSeatRepository.saveAll(showSeats);
+        ticketRepository.delete(ticket);
+
+        // 6. Send cancellation confirmation email
+        sendCancellationEmail(ticket.getUser(), ticket);
+
+        return "Ticket canceled successfully";
+    }
+
+    private void sendCancellationEmail(User user, Ticket ticket) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmailId());
+        mailMessage.setFrom("projectbackend45@gmail.com");
+        mailMessage.setSubject("Your Ticket Cancellation Confirmation - BookMyShow");
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("Hi ").append(user.getName()).append(",\n\n");
+        emailBody.append("We regret to inform you that your ticket has been successfully canceled.\n");
+        emailBody.append("Here are the ticket details:\n");
+        emailBody.append("Movie Name: ").append(ticket.getMovieName()).append("\n");
+        emailBody.append("Theater Name: ").append(ticket.getTheaterName()).append("\n");
+        emailBody.append("Show Date: ").append(ticket.getShowDate()).append("\n");
+        emailBody.append("Show Time: ").append(ticket.getShowTime()).append("\n");
+        emailBody.append("Booked Seats: ").append(ticket.getBookedSeats()).append("\n");
+        emailBody.append("We hope to see you again soon!\n\nBest Regards,\nBookMyShow Team");
+
+        mailMessage.setText(emailBody.toString());
+
+        // Send the email
+        javaMailSender.send(mailMessage);
+    }
+
+
+
+
 }

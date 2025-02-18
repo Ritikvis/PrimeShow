@@ -1,5 +1,6 @@
 package com.Backend.BookMyShow.Repository;
 
+import com.Backend.BookMyShow.Models.Movie;
 import com.Backend.BookMyShow.Models.Show;
 import com.Backend.BookMyShow.Models.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;

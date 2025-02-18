@@ -1,5 +1,8 @@
 package com.Backend.BookMyShow.Controller;
 
+import com.Backend.BookMyShow.Models.Movie;
+import com.Backend.BookMyShow.Models.TheaterSeat;
+import com.Backend.BookMyShow.Models.User;
 import com.Backend.BookMyShow.Requests.*;
 import com.Backend.BookMyShow.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -58,6 +62,7 @@ public class AdminController {
         String response = movieService.updateMovieAttributes(updateMovieRequest);
         return new ResponseEntity(response, HttpStatus.OK);
     }
+
     @PostMapping("add/Show")
     public ResponseEntity addShow(@RequestBody AddShowRequest addShowRequest){
 
@@ -78,5 +83,10 @@ public class AdminController {
         String response = theaterService.associateTheaterSeats(theaterSeatsRequest);
         return new ResponseEntity(response,HttpStatus.OK);
     }
+    @GetMapping("ListOfUsers")
+    public List<User> ListOfUsers(){
+        return userService.ListOfUsers();
+    }
+
 
 }

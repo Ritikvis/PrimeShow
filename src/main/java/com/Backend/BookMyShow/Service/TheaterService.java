@@ -1,8 +1,11 @@
 package com.Backend.BookMyShow.Service;
 
 import com.Backend.BookMyShow.Enum.SeatType;
+import com.Backend.BookMyShow.Exception.BookingException;
+import com.Backend.BookMyShow.Models.Movie;
 import com.Backend.BookMyShow.Models.Theater;
 import com.Backend.BookMyShow.Models.TheaterSeat;
+import com.Backend.BookMyShow.Repository.MovieRepository;
 import com.Backend.BookMyShow.Repository.TheaterRepository;
 import com.Backend.BookMyShow.Repository.TheaterSeatsRepository;
 import com.Backend.BookMyShow.Requests.AddTheaterRequest;
@@ -20,6 +23,11 @@ public class TheaterService {
 
     @Autowired
     private TheaterSeatsRepository theaterSeatsRepository;
+    @Autowired
+    private MovieRepository movieRepository;
+
+
+
 
     public String addTheater(AddTheaterRequest theaterRequest){
 
@@ -111,4 +119,7 @@ public class TheaterService {
         theaterSeatsRepository.saveAll(theaterSeatList);
         return "The theater seats have been associated";
     }
+
+
+
 }

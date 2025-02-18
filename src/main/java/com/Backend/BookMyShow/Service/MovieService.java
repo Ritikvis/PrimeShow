@@ -1,7 +1,11 @@
 package com.Backend.BookMyShow.Service;
 
 import com.Backend.BookMyShow.Models.Movie;
+import com.Backend.BookMyShow.Models.Show;
+import com.Backend.BookMyShow.Models.Ticket;
 import com.Backend.BookMyShow.Repository.MovieRepository;
+import com.Backend.BookMyShow.Repository.ShowRepository;
+import com.Backend.BookMyShow.Repository.TicketRepository;
 import com.Backend.BookMyShow.Requests.AddMovieRequest;
 import com.Backend.BookMyShow.Requests.UpdateMovieRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,10 @@ import java.util.List;
 public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private ShowRepository showRepository;
+    @Autowired
+    private TicketRepository ticketRepository;
 
     public String addMovie(AddMovieRequest movieRequest) {
 
@@ -39,6 +47,7 @@ public class MovieService {
         movie.setLanguage(movieRequest.getNewLanguage());
         movie.setRating(movieRequest.getNewRating());
 
+
         //update the value
 
         // Save it back to DB
@@ -47,5 +56,11 @@ public class MovieService {
         //put it back to HM
         return "Movie Attributes have been updated ";
     }
+
+    public List<Movie> ListOfMovies() {
+        List<Movie> movies = movieRepository.findAll();
+        return movies;
+    }
+
 
 }
